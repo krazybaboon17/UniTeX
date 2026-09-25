@@ -10,7 +10,6 @@ def onPress(key):
             charList.pop()
     elif getattr(key, "char", None) is not None:
         charList.append(key.char)
-    returnWord()
 
 def onRelease(key):
     if key == keyboard.Key.esc:
@@ -19,6 +18,13 @@ def onRelease(key):
 def returnWord():
     return("".join(charList))
 
-with keyboard.Listener(on_press=onPress, on_release=onRelease) as listener:
+def startListener():
+    listener = keyboard.Listener(on_press=onPress, on_release=onRelease)
+    listener.start()
+    return listener
+
+if __name__ == "__main__":
+    listener = startListener()
     listener.join()
         
+
