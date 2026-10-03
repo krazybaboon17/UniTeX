@@ -124,6 +124,26 @@ def getSymbol(key):
     return shortcuts[key]
 
 
+def findShortcut(text, allowAmbiguous=False):
+    matches = []
+    for shortcut in shortcuts:
+        start = text.find(shortcut)
+        while start != -1:
+            matches.append((start, shortcut))
+            start = text.find(shortcut, start + 1)
+
+    matches.sort(key=lambda match: (match[0], -len(match[1])))
+    for start, shortcut in matches:
+        typedTail = text[start:]
+        if not allowAmbiguous and any(
+            len(candidate) > len(typedTail) and candidate.startswith(typedTail)
+            for candidate in shortcuts
+        ):
+            continue
+        return shortcut, start, start + len(shortcut)
+    return None
+
+
 if __name__ == "__main__":
     #self test
     testWords = ["//alpha", "//Omega", "//reals", "//nope", "alpha", "//ALPHA"]
