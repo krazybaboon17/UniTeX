@@ -9,7 +9,6 @@ name = None    # the template being filled in, like "//frac" (None = no template
 boxes = []     # what the user typed in each box
 current = 0    # which box the user is typing in
 busy = False   # True while this program is typing, so we ignore our own keys
-tabPending = False
 trailingText = ""
 fractionWrapped = False
 
@@ -29,7 +28,7 @@ def selectBox(arrow):
 
 def start(shortcut, trailing=""):
     # The runner calls this. Types the template (like □/□) and highlights the first box.
-    global name, boxes, current, busy, tabPending, trailingText, fractionWrapped
+    global name, boxes, current, busy, trailingText, fractionWrapped
     busy = True
     pattern = mathShortcuts.templates[shortcut]
     keyboard.type(pattern + trailing)
@@ -41,36 +40,25 @@ def start(shortcut, trailing=""):
     name = shortcut
     boxes = [""] * pattern.count("□")
     current = 0
-    tabPending = False
     trailingText = trailing
     fractionWrapped = False
 
 
-def nextBox():
-    # Highlights the next □ (the user's arrow key already moved past the "/")
-    global busy
-    busy = True
-    selectBox(Key.right)
-    time.sleep(0.1)
-    busy = False
-
-
-def nextBoxWithTab(previous):
+def nextBox(previous):
     global busy, fractionWrapped
     busy = True
     pieces = mathShortcuts.templates[name].split("□")
     if name == "//frac" and previous == 0:
+        press(Key.left, len(pieces[previous + 1]))
         if boxes[previous]:
             keyboard.type(")")
             press(Key.left, len(boxes[previous]) + 1)
             keyboard.type("(")
-            press(Key.right, len(boxes[previous]) + 1)
+            press(Key.right, len(boxes[previous]) + 2)
         else:
             keyboard.type("()")
+            press(Key.right)
         fractionWrapped = True
-    elif not boxes[previous]:
-        press(Key.right)
-    press(Key.right, len(pieces[previous + 1]))
     selectBox(Key.right)
     time.sleep(0.1)
     busy = False
@@ -78,7 +66,7 @@ def nextBoxWithTab(previous):
 
 def finish():
     # Erases the template and types the finished version, like ¹²⁄₃₄
-    global name, busy, tabPending, trailingText
+    global name, busy, trailingText
     busy = True
     pieces = mathShortcuts.templates[name].split("□")   # "log_□(□)" -> ["log_", "(", ")"]
 
@@ -96,7 +84,6 @@ def finish():
     press(Key.delete, after)
     keyboard.type(mathShortcuts.finalText(name, boxes) + trailingText + " ")
     name = None
-    tabPending = False
     trailingText = ""
     time.sleep(0.1)
     busy = False
@@ -104,21 +91,16 @@ def finish():
 
 def handleKey(key):
     # keyboardInput calls this for every key. Returns True if the key was for a box.
-    global current, tabPending
+    global current
     if busy:
         return True
     if name is None:
         return False
 
-    if key == Key.tab:
-        if not tabPending and current < len(boxes) - 1:
-            previous = current
-            current = current + 1
-            tabPending = True
-            threading.Timer(0.05, nextBoxWithTab, args=(previous,)).start()
-    elif key == Key.right and current < len(boxes) - 1:
+    if key == Key.right and current < len(boxes) - 1:
+        previous = current
         current = current + 1
-        threading.Timer(0.05, nextBox).start()   # wait a moment so the arrow reaches the app first
+        threading.Timer(0.05, nextBox, args=(previous,)).start()
     elif key == Key.space:
         threading.Timer(0.05, finish).start()
     elif key == Key.backspace:
@@ -126,12 +108,3 @@ def handleKey(key):
     elif getattr(key, "char", None) is not None:
         boxes[current] = boxes[current] + key.char
     return True
-
-
-def isTabPending():
-    return tabPending
-
-
-def clearTabPending():
-    global tabPending
-    tabPending = False

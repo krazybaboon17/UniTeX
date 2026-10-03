@@ -1,20 +1,8 @@
 from pynput import keyboard
 import mathTyping
-import sys
 
 charList = []
 cursorPosition = 0
-
-if sys.platform == "darwin":
-    from Quartz import CGEventGetIntegerValueField, kCGEventKeyDown, kCGEventKeyUp, kCGKeyboardEventKeycode
-
-    def interceptTab(eventType, event):
-        keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode)
-        if keycode == 48 and eventType in (kCGEventKeyDown, kCGEventKeyUp) and mathTyping.isTabPending():
-            if eventType == kCGEventKeyUp:
-                mathTyping.clearTabPending()
-            return None
-        return event
 
 def onPress(key):
     global cursorPosition
@@ -55,10 +43,7 @@ def setWord(word):
     cursorPosition = len(charList)
 
 def startListener():
-    listenerOptions = {}
-    if sys.platform == "darwin":
-        listenerOptions["darwin_intercept"] = interceptTab
-    listener = keyboard.Listener(on_press=onPress, on_release=onRelease, **listenerOptions)
+    listener = keyboard.Listener(on_press=onPress, on_release=onRelease)
     listener.start()
     return listener
 
