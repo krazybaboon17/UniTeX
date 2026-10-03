@@ -2,6 +2,7 @@ import threading
 import time
 from pynput.keyboard import Key, Controller
 import mathShortcuts
+import shortcutDetection
 
 keyboard = Controller()
 
@@ -64,6 +65,15 @@ def nextBox(previous):
     busy = False
 
 
+def expandShortcuts(text):
+    while True:
+        match = shortcutDetection.findShortcut(text, allowAmbiguous=True)
+        if match is None:
+            return text
+        shortcut, start, end = match
+        text = text[:start] + shortcutDetection.getSymbol(shortcut) + text[end:]
+
+
 def finish():
     # Erases the template and types the finished version, like ¹²⁄₃₄
     global name, busy, trailingText
@@ -82,7 +92,8 @@ def finish():
 
     press(Key.backspace, before)
     press(Key.delete, after)
-    keyboard.type(mathShortcuts.finalText(name, boxes) + trailingText + " ")
+    expandedBoxes = [expandShortcuts(box) for box in boxes]
+    keyboard.type(mathShortcuts.finalText(name, expandedBoxes) + trailingText + " ")
     name = None
     trailingText = ""
     time.sleep(0.1)
