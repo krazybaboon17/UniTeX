@@ -16,6 +16,7 @@ templates = {
     "//cot": "cot(□)",
     "//sec": "sec(□)",
     "//csc": "csc(□)",
+    "//_": "□"
 }
 
 superscripts = {"0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
@@ -38,6 +39,8 @@ def finalText(name, boxes):
         return boxes[0] + small(boxes[1], superscripts)
     if name == "//log" and boxes[0].isdigit():
         return "log" + small(boxes[0], subscripts) + "(" + boxes[1] + ")"
+    if name == "//_" and boxes[0].isdigit():
+        return small(boxes[0], subscripts)
     text = templates[name]
     for box in boxes:
         text = text.replace("□", box, 1)
