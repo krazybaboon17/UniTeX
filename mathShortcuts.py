@@ -7,6 +7,15 @@ templates = {
     "//sin": "sin(□)",
     "//cos": "cos(□)",
     "//tan": "tan(□)",
+    "//arcsin": "arcsin(□)",
+    "//arccos": "arccos(□)",
+    "//arctan": "arctan(□)",
+    "//sinh": "sinh(□)",
+    "//cosh": "cosh(□)",
+    "//tanh": "tanh(□)",
+    "//cot": "cot(□)",
+    "//sec": "sec(□)",
+    "//csc": "csc(□)",
 }
 
 superscripts = {"0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
