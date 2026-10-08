@@ -16,7 +16,15 @@ def main():
     if userChoice == "0":
         print("Settings")
         print("Currently, the only option is to use Unicode. LaTeX will come with UniTeX 2.0")
-    elif userChoice == "1":
+        user = input("Would you like to continue or not (y/n)?: ")
+        while (user != "y" and user != "n"):
+            print("Invalid input")
+            user = input("Would you like to continue or not (y/n)?: ")
+        if user == "y":
+            userChoice = "1"
+        else:
+            return
+    if userChoice == "1":
         listener = keyboardInput.startListener()
 
         lastWord = ""
