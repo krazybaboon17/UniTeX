@@ -103,6 +103,9 @@ shortcuts = {
     "//parallel": "∥",
     "//hbar": "ℏ",
     "//ell": "ℓ",
+
+
+    "//vec": "\u20d7",
 }
 
 def loadShortcuts():
