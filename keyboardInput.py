@@ -8,9 +8,9 @@ def onPress(key):
     global cursorPosition
     if mathTyping.handleKey(key):
         return
-    if key == keyboard.Key.space:
-        charList.insert(cursorPosition, " ")
-        cursorPosition += 1
+    if key == keyboard.Key.space or key == keyboard.Key.enter or key == keyboard.Key.tab or key == keyboard.Key.esc:
+        charList.clear()
+        cursorPosition = 0
     elif key == keyboard.Key.backspace:
         if cursorPosition > 0:
             del charList[cursorPosition - 1]
