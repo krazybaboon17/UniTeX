@@ -16,7 +16,8 @@ templates = {
     "//cot": "cot(□)",
     "//sec": "sec(□)",
     "//csc": "csc(□)",
-    "//_": "□"
+    "//_": "□",
+    "//vec": "□",
 }
 
 superscripts = {
@@ -52,12 +53,16 @@ def small(number, table):
 def finalText(name, boxes):
     if name == "//frac":
         return "(" + boxes[0] + ")/(" + boxes[1] + ")"
-    if name == "//pow" and all(c in superscripts for c in boxes[1]):
+    if name == "//pow" and boxes[1].isdigit():
         return boxes[0] + small(boxes[1], superscripts)
-    if name == "//log" and all(c in subscripts for c in boxes[0]):
+    if name == "//log" and boxes[0].isdigit():
         return "log" + small(boxes[0], subscripts) + "(" + boxes[1] + ")"
-    if name == "//_" and all(c in subscripts for c in boxes[0]):
+    if name == "//_" and boxes[0].isdigit():
         return small(boxes[0], subscripts)
+    if name == "//vec":
+        return boxes[0] + "placeholder"
+    if name == "//bar":
+        return boxes[0] + ""
     text = templates[name]
     for box in boxes:
         text = text.replace("□", box, 1)
