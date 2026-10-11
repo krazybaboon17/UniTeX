@@ -1,5 +1,6 @@
 shortcuts = {
     # Greek lowercase
+    
     "//alpha": "α",
     "//beta": "β",
     "//gamma": "γ",
@@ -97,7 +98,6 @@ shortcuts = {
     "//because": "∵",
 
     # Misc
-    "//degree": "°",
     "//angle": "∠",
     "//perp": "⊥",
     "//parallel": "∥",

@@ -5,6 +5,7 @@ import deletingShortcut
 import writingValue
 import mathShortcuts
 import mathTyping
+from pynput import keyboard
 
 def main():
 
@@ -44,6 +45,12 @@ def main():
     if userChoice == "1":
         shortcutDetection.loadShortcuts()
         listener = keyboardInput.startListener()
+
+        print("UniTeX is running in the background. Press Esc to pause.")
+        print("\n")
+
+        
+
 
         lastWord = ""
         pendingWord = None

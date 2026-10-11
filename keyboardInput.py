@@ -3,14 +3,25 @@ import mathTyping
 
 charList = []
 cursorPosition = 0
-
+paused = False
 def onPress(key):
     global cursorPosition
+    global paused
     if mathTyping.handleKey(key):
         return
-    if key == keyboard.Key.space or key == keyboard.Key.enter or key == keyboard.Key.tab or key == keyboard.Key.esc:
+    if key == keyboard.Key.space or key == keyboard.Key.enter or key == keyboard.Key.tab:
         charList.clear()
         cursorPosition = 0
+    if key == keyboard.Key.esc:
+        paused = not paused
+        charList.clear()
+        cursorPosition = 0
+        if paused:
+            print("\nUniTeX Paused. Press Esc to resume")
+        else:
+            print("\nUniTeX Resumed")
+    if paused:
+        return
     elif key == keyboard.Key.backspace:
         if cursorPosition > 0:
             del charList[cursorPosition - 1]
@@ -31,8 +42,7 @@ def onPress(key):
         cursorPosition = max(0, cursorPosition - overflow)
 
 def onRelease(key):
-    if key == keyboard.Key.esc:
-        return False
+    pass
 
 def returnWord():
     return("".join(charList))
