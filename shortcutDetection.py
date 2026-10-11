@@ -105,6 +105,14 @@ shortcuts = {
     "//ell": "ℓ",
 }
 
+def loadShortcuts():
+    f = open("customShortcuts.txt", "r")
+    for line in f:
+        if " : " in line:
+            key, value = line.split(" : ", 1)
+            shortcuts[key.strip()] = value.strip()
+    f.close()
+    
 
 def isShortcut(word):
     #return true if word from returnWord() is exactly one of the shortcuts.

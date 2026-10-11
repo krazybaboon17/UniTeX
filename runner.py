@@ -16,6 +16,23 @@ def main():
     if userChoice == "0":
         print("Settings")
         print("Currently, the only option is to use Unicode. LaTeX will come with UniTeX 2.0")
+        addShortcuts = 1
+        while (addShortcuts == 1):
+            addShortcuts = int(input("Enter 0 to skip adding shortcuts, or 1 to add shortcuts: "))
+            if (addShortcuts == 0):
+                break
+            while (addShortcuts != 0 and addShortcuts != 1):
+                print("Invalid input")
+                addShortcuts = int(input("Enter 0 to skip adding shortcuts, or 1 to add shortcuts: "))
+            if addShortcuts == 1:
+                key = input("Enter shortcut: ")
+                value = input("Enter value: ")
+                f = open("customShortcuts.txt", "a")
+                f.write(key + " : " + value + "\n")
+                f.close()
+                print("Shortcut Added!")
+                print("\n")
+        print("\n")
         user = input("Would you like to continue or not (y/n)?: ")
         while (user != "y" and user != "n"):
             print("Invalid input")
@@ -25,6 +42,7 @@ def main():
         else:
             return
     if userChoice == "1":
+        shortcutDetection.loadShortcuts()
         listener = keyboardInput.startListener()
 
         lastWord = ""
