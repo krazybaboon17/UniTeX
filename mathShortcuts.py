@@ -17,6 +17,8 @@ templates = {
     "//sec": "sec(□)",
     "//csc": "csc(□)",
     "//_": "□",
+    "//bar": "□",
+    "//vec": "□",
 }
 
 superscripts = {
@@ -59,7 +61,7 @@ def finalText(name, boxes):
     if name == "//_" and boxes[0].isdigit():
         return small(boxes[0], subscripts)
     if name == "//vec":
-        return boxes[0] + "placeholder"
+        return boxes[0] + "\u20d7"
     if name == "//bar":
         return boxes[0] + "\u0305"
     text = templates[name]

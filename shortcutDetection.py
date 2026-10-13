@@ -1,3 +1,5 @@
+import os
+
 shortcuts = {
     # Greek lowercase
     
@@ -103,18 +105,37 @@ shortcuts = {
     "//parallel": "∥",
     "//hbar": "ℏ",
     "//ell": "ℓ",
-
-
-    "//vec": "\u20d7",
 }
 
+def getShortcutsPath():
+    if os.path.exists("customShortcuts.txt"):
+        return "customShortcuts.txt"
+    home_dir = os.path.expanduser("~/.unitex")
+    try:
+        os.makedirs(home_dir, exist_ok=True)
+    except Exception:
+        pass
+    custom_path = os.path.join(home_dir, "customShortcuts.txt")
+    if not os.path.exists(custom_path):
+        try:
+            with open(custom_path, "w", encoding="utf-8") as f:
+                f.write("//deg : °\n")
+        except Exception:
+            pass
+    return custom_path
+
 def loadShortcuts():
-    f = open("customShortcuts.txt", "r")
-    for line in f:
-        if " : " in line:
-            key, value = line.split(" : ", 1)
-            shortcuts[key.strip()] = value.strip()
-    f.close()
+    path = getShortcutsPath()
+    if not os.path.exists(path):
+        return
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                if " : " in line:
+                    key, value = line.split(" : ", 1)
+                    shortcuts[key.strip()] = value.strip()
+    except Exception as e:
+        print(f"Warning: Could not load shortcuts from {path}: {e}")
     
 
 def isShortcut(word):

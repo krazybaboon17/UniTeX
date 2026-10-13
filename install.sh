@@ -3,11 +3,13 @@
 
 echo "Downloading UniTeX..."
 
-# Replace this URL with the actual link to your uploaded executable later!
-DOWNLOAD_URL="https://unitex-seven.vercel.app/UniTeX"
+DOWNLOAD_URL="https://unitex-seven.vercel.app/unitex"
 
 # Download the executable to a temporary location
-curl -# -L -o /tmp/unitex_download "$DOWNLOAD_URL"
+if ! curl -# -f -L -o /tmp/unitex_download "$DOWNLOAD_URL"; then
+    echo "❌ Error: Failed to download UniTeX from $DOWNLOAD_URL"
+    exit 1
+fi
 
 echo "Installing to /usr/local/bin..."
 # Move it to the system PATH so it can be run from anywhere. 
