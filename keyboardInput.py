@@ -7,12 +7,13 @@ paused = False
 def onPress(key):
     global cursorPosition
     global paused
-    if mathTyping.handleKey(key):
-        return
-    if key == keyboard.Key.space or key == keyboard.Key.enter or key == keyboard.Key.tab:
-        charList.clear()
-        cursorPosition = 0
     if key == keyboard.Key.esc:
+        if mathTyping.isActive():
+            mathTyping.cancel()
+            charList.clear()
+            cursorPosition = 0
+            print("\nUniTeX Template Cancelled")
+            return
         paused = not paused
         charList.clear()
         cursorPosition = 0
@@ -20,7 +21,10 @@ def onPress(key):
             print("\nUniTeX Paused. Press Esc to resume")
         else:
             print("\nUniTeX Resumed")
+        return
     if paused:
+        return
+    if mathTyping.handleKey(key):
         return
     elif key == keyboard.Key.backspace:
         if cursorPosition > 0:

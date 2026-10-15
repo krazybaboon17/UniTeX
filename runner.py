@@ -56,6 +56,10 @@ def main():
         pendingWord = None
         pendingSince = None
         while listener.is_alive():
+            if mathTyping.isActive():
+                time.sleep(0.05)
+                continue
+
             word = keyboardInput.returnWord()
             if word != lastWord:
                 print("word:", word)
@@ -103,13 +107,19 @@ def main():
 
             elif templateMatch is not None:
                 template, start, end = templateMatch
+                prefix = word[:start]
                 suffix = word[end:]
                 print(template, "is a math template")
-                deletingShortcut.deleteShortcut(template + suffix)
-                keyboardInput.setWord(suffix)
-                mathTyping.start(template, suffix)
+                if (template == "//pow" or template == "//_") and prefix:
+                    deletingShortcut.deleteShortcut(template + suffix)
+                    keyboardInput.setWord(suffix)
+                    mathTyping.start(template, suffix, prefix=prefix)
+                else:
+                    deletingShortcut.deleteShortcut(template + suffix)
+                    keyboardInput.setWord(suffix)
+                    mathTyping.start(template, suffix)
 
-            time.sleep(0.1)
+            time.sleep(0.05)
 
         print("listener stopped")
         listener.stop()

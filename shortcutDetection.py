@@ -53,6 +53,9 @@ shortcuts = {
     "//partial": "∂",
     "//nabla": "∇",
     "//infty": "∞",
+    "//inf": "∞",
+    "//iint": "∬",
+    "//iiint": "∭",
 
     # Relations
     "//neq": "≠",
@@ -64,6 +67,7 @@ shortcuts = {
     "//propto": "∝",
 
     # Arrows
+    "//to": "→",
     "//rightarrow": "→",
     "//leftarrow": "←",
     "//leftrightarrow": "↔",
@@ -105,6 +109,11 @@ shortcuts = {
     "//parallel": "∥",
     "//hbar": "ℏ",
     "//ell": "ℓ",
+    "//deg": "°",
+    "//degree": "°",
+    "//prime": "′",
+    "//dprime": "″",
+    "//ddx": "d/dx",
 }
 
 def getShortcutsPath():
@@ -125,17 +134,21 @@ def getShortcutsPath():
     return custom_path
 
 def loadShortcuts():
-    path = getShortcutsPath()
-    if not os.path.exists(path):
-        return
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            for line in f:
-                if " : " in line:
-                    key, value = line.split(" : ", 1)
-                    shortcuts[key.strip()] = value.strip()
-    except Exception as e:
-        print(f"Warning: Could not load shortcuts from {path}: {e}")
+    paths = []
+    home_path = os.path.expanduser("~/.unitex/customShortcuts.txt")
+    if os.path.exists(home_path):
+        paths.append(home_path)
+    if os.path.exists("customShortcuts.txt") and os.path.abspath("customShortcuts.txt") != os.path.abspath(home_path):
+        paths.append("customShortcuts.txt")
+    for path in paths:
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                for line in f:
+                    if " : " in line:
+                        key, value = line.split(" : ", 1)
+                        shortcuts[key.strip()] = value.strip()
+        except Exception as e:
+            print(f"Warning: Could not load shortcuts from {path}: {e}")
     
 
 def isShortcut(word):

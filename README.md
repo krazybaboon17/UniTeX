@@ -19,13 +19,29 @@ UniTeX is a keyboard shortcut expander for math/physics writing. Type shortcuts 
 - Safer injection behavior (guard during replacement)
 - Designed to work across common text input apps
 
-## Supported Shortcuts
-> Add your real mappings here (example format):
+## Supported Shortcuts & Templates
+UniTeX supports instant symbols and interactive multi-box math templates (with full support for nesting templates inside templates with zero friction):
 
-- `//pi` → Unicode: `π` | LaTeX: `\pi`
-- `//theta` → Unicode: `θ` | LaTeX: `\theta`
-- `//int` → Unicode: `∫` | LaTeX: `\int`
-- `//sqrt` → Unicode: `√` | LaTeX: `\sqrt`
+### Interactive Math Templates
+- `//lim` → Limit template: `lim_(□→□) (□)` (e.g., `lim_(x→0) ((sin(x))/(x))`)
+- `//frac` → Fraction: `(□)/(□)`
+- `//pow` → Power/Superscript: `□^□` or `x//pow` → `x²`, `xⁿ`, `eˣ`
+- `//_` → Subscript: `□` or `x//_ 1` → `x₁`
+- `//log` → Base logarithm: `log_□(□)` → `log₂(x)`
+- `//sin`, `//cos`, `//tan`, `//ln`, `//cbrt` → Interactive function templates: `sin(□)`, `cos(□)`, `ln(□)`, `∛(□)`
+
+### Core AP Calculus BC Shortcuts
+- `//to` → `→`
+- `//lim` → `lim_(□→□) (□)`
+- `//int`, `//iint`, `//iiint`, `//oint` → `∫`, `∬`, `∭`, `∮`
+- `//prime`, `//dprime` → `′`, `″` (derivatives: `f′(x)`, `f″(x)`)
+- `//ddx` → `d/dx`
+- `//infty`, `//inf` → `∞`
+- `//pi`, `//theta`, `//alpha` → `π`, `θ`, `α`
+- `//sqrt` → `√`
+- `//deg`, `//degree` → `°`
+- `//sum`, `//prod` → `∑`, `∏`
+- `//partial`, `//nabla` → `∂`, `∇`
 
 ## How it works (high level)
 1. Capture typed keystrokes (global listener)

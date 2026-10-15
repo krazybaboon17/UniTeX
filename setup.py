@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = "unitex",
-    version = "1.0.1",
+    version = "1.1.0",
     description = "Auto-completing unicode text",
     
     author = "Saharsh Kaparthi, Bowen Li, Akhil Kora",
