@@ -58,12 +58,7 @@ UniTeX supports instant symbols and interactive multi-box math templates (with f
 - (If you have a toggle hotkey, document it here.)
 
 ## Installation
-> Update this with your repo’s exact steps.
-
-1. Clone the repo
-2. Install dependencies
-3. Run the app
-4. Grant required permissions (especially on macOS)
+- Navigate to https://unitex-seven.vercel.app/ and follow directions for download
 
 ## Requirements / Permissions
 - **macOS**: may require Accessibility/Input permissions for global input monitoring + injection
@@ -83,5 +78,4 @@ Contributions welcome:
 - Improve mode switching UX
 - Add more target-app support
 
-## License
-> Add your license here (MIT/Apache/etc.)
+
