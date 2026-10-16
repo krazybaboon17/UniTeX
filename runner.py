@@ -28,8 +28,8 @@ def main():
             if addShortcuts == 1:
                 key = input("Enter shortcut: ")
                 value = input("Enter value: ")
-                shortcuts_file = shortcutDetection.getShortcutsPath()
-                with open(shortcuts_file, "a", encoding="utf-8") as f:
+                shortcutsFile = shortcutDetection.getShortcutsPath()
+                with open(shortcutsFile, "a", encoding="utf-8") as f:
                     f.write(key + " : " + value + "\n")
                 print("Shortcut Added!")
                 print("\n")

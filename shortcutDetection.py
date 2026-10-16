@@ -113,32 +113,36 @@ shortcuts = {
     "//degree": "°",
     "//prime": "′",
     "//dprime": "″",
-    "//ddx": "d/dx",
+
+    # Calculus
+    "//dydx": "dy/dx",
+    "//dydt": "dy/dt",
+    "//dxdt": "dx/dt",
 }
 
 def getShortcutsPath():
     if os.path.exists("customShortcuts.txt"):
         return "customShortcuts.txt"
-    home_dir = os.path.expanduser("~/.unitex")
+    homeDir = os.path.expanduser("~/.unitex")
     try:
-        os.makedirs(home_dir, exist_ok=True)
+        os.makedirs(homeDir, exist_ok=True)
     except Exception:
         pass
-    custom_path = os.path.join(home_dir, "customShortcuts.txt")
-    if not os.path.exists(custom_path):
+    customPath = os.path.join(homeDir, "customShortcuts.txt")
+    if not os.path.exists(customPath):
         try:
-            with open(custom_path, "w", encoding="utf-8") as f:
+            with open(customPath, "w", encoding="utf-8") as f:
                 f.write("//deg : °\n")
         except Exception:
             pass
-    return custom_path
+    return customPath
 
 def loadShortcuts():
     paths = []
-    home_path = os.path.expanduser("~/.unitex/customShortcuts.txt")
-    if os.path.exists(home_path):
-        paths.append(home_path)
-    if os.path.exists("customShortcuts.txt") and os.path.abspath("customShortcuts.txt") != os.path.abspath(home_path):
+    homePath = os.path.expanduser("~/.unitex/customShortcuts.txt")
+    if os.path.exists(homePath):
+        paths.append(homePath)
+    if os.path.exists("customShortcuts.txt") and os.path.abspath("customShortcuts.txt") != os.path.abspath(homePath):
         paths.append("customShortcuts.txt")
     for path in paths:
         try:

@@ -70,14 +70,14 @@ def nextBox(previous):
         return
     busy = True
     state = templateStack[-1]
-    
+
     # Expand any pending ambiguous shortcuts in the box we are leaving
-    old_box = state.boxes[previous]
-    new_box = expandShortcuts(old_box)
-    if new_box != old_box:
-        press(Key.backspace, len(old_box))
-        keyboard.type(new_box)
-        state.boxes[previous] = new_box
+    oldBox = state.boxes[previous]
+    newBox = expandShortcuts(oldBox)
+    if newBox != oldBox:
+        press(Key.backspace, len(oldBox))
+        keyboard.type(newBox)
+        state.boxes[previous] = newBox
 
     pieces = state.pieces
     if state.name == "//frac" and previous == 0:
@@ -92,9 +92,9 @@ def nextBox(previous):
             press(Key.right)
         state.fractionWrapped = True
     else:
-        sep_len = len(pieces[previous + 1])
-        if sep_len > 0:
-            press(Key.right, sep_len)
+        sepLen = len(pieces[previous + 1])
+        if sepLen > 0:
+            press(Key.right, sepLen)
     selectBox(Key.right)
     time.sleep(0.05)
     busy = False
@@ -104,10 +104,10 @@ def expandShortcuts(text):
         match = shortcutDetection.findShortcut(text, allowAmbiguous=True)
         if match is None:
             return text
-        shortcut, start, end = match
-        text = text[:start] + shortcutDetection.getSymbol(shortcut) + text[end:]
+        shortcut, startIdx, endIdx = match
+        text = text[:startIdx] + shortcutDetection.getSymbol(shortcut) + text[endIdx:]
 
-def finish(via_space=False):
+def finish(viaSpace=False):
     global busy
     if not templateStack:
         return
@@ -115,7 +115,7 @@ def finish(via_space=False):
     state = templateStack[-1]
     pieces = state.pieces
 
-    before = 1 if via_space else 0
+    before = 1 if viaSpace else 0
     if state.prefix and state.name == "//pow":
         before += len(state.prefix) + 1
         before += len(state.boxes[1]) if len(state.boxes) > 1 else 0
@@ -169,20 +169,20 @@ def handleKey(key):
 
     # Finishing at the last box
     if (key == Key.right or key == Key.tab) and state.current == len(state.boxes) - 1:
-        threading.Timer(0.02, finish, kwargs={"via_space": False}).start()
+        threading.Timer(0.02, finish, kwargs={"viaSpace": False}).start()
         return True
 
     # Space key handling
     if key == Key.space:
         if state.current == len(state.boxes) - 1:
-            threading.Timer(0.02, finish, kwargs={"via_space": True}).start()
+            threading.Timer(0.02, finish, kwargs={"viaSpace": True}).start()
         else:
             state.boxes[state.current] += " "
         return True
 
     # Enter finishes current template
     if key == Key.enter:
-        threading.Timer(0.02, finish, kwargs={"via_space": False}).start()
+        threading.Timer(0.02, finish, kwargs={"viaSpace": False}).start()
         return True
 
     # Backspace inside box
@@ -195,35 +195,35 @@ def handleKey(key):
     if char is not None:
         state.boxes[state.current] += char
 
-        # 1. Check if current box just typed a shortcut (e.g. //pi, //to, //sqrt, //deg, etc.)
+        # 1. Check if current box just typed a shortcut (e.g. //pi, //to, //sqrt, //deg)
         match = shortcutDetection.findShortcut(state.boxes[state.current], allowAmbiguous=False)
         if match is not None:
-            shortcut, s_idx, e_idx = match
-            if e_idx == len(state.boxes[state.current]):
+            shortcut, startIdx, endIdx = match
+            if endIdx == len(state.boxes[state.current]):
                 symbol = shortcutDetection.getSymbol(shortcut)
                 busy = True
                 press(Key.backspace, len(shortcut))
                 keyboard.type(symbol)
                 time.sleep(0.02)
                 busy = False
-                state.boxes[state.current] = state.boxes[state.current][:s_idx] + symbol
+                state.boxes[state.current] = state.boxes[state.current][:startIdx] + symbol
                 return True
 
         # 2. Check if current box just typed a nested template (e.g. //frac, //pow, //sin, //lim)
-        tmpl_match = mathShortcuts.findTemplate(state.boxes[state.current], shortcutDetection.shortcuts, allowAmbiguous=False)
-        if tmpl_match is not None:
-            tmpl, s_idx, e_idx = tmpl_match
-            if e_idx == len(state.boxes[state.current]):
-                prefix_in_box = state.boxes[state.current][:s_idx]
+        tmplMatch = mathShortcuts.findTemplate(state.boxes[state.current], shortcutDetection.shortcuts, allowAmbiguous=False)
+        if tmplMatch is not None:
+            tmpl, startIdx, endIdx = tmplMatch
+            if endIdx == len(state.boxes[state.current]):
+                prefixInBox = state.boxes[state.current][:startIdx]
                 busy = True
                 press(Key.backspace, len(tmpl))
                 time.sleep(0.02)
                 busy = False
-                if tmpl == "//pow" and prefix_in_box:
+                if tmpl == "//pow" and prefixInBox:
                     state.boxes[state.current] = ""
-                    threading.Timer(0.02, startNested, args=(tmpl,), kwargs={"prefix": prefix_in_box}).start()
+                    threading.Timer(0.02, startNested, args=(tmpl,), kwargs={"prefix": prefixInBox}).start()
                 else:
-                    state.boxes[state.current] = prefix_in_box
+                    state.boxes[state.current] = prefixInBox
                     threading.Timer(0.02, startNested, args=(tmpl,)).start()
                 return True
 

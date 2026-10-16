@@ -24,6 +24,7 @@ UniTeX supports instant symbols and interactive multi-box math templates (with f
 
 ### Interactive Math Templates
 - `//lim` → Limit template: `lim_(□→□) (□)` (e.g., `lim_(x→0) ((sin(x))/(x))`)
+- `//ddx`, `//ddt` → Differential operator templates: `d/dx(□)`, `d/dt(□)` (e.g., `d/dx(x²)`, `d/dt(r)`)
 - `//frac` → Fraction: `(□)/(□)`
 - `//pow` → Power/Superscript: `□^□` or `x//pow` → `x²`, `xⁿ`, `eˣ`
 - `//_` → Subscript: `□` or `x//_ 1` → `x₁`
@@ -33,9 +34,10 @@ UniTeX supports instant symbols and interactive multi-box math templates (with f
 ### Core AP Calculus BC Shortcuts
 - `//to` → `→`
 - `//lim` → `lim_(□→□) (□)`
+- `//ddx`, `//ddt` → `d/dx(□)`, `d/dt(□)` (interactive derivative templates)
+- `//dydx`, `//dydt`, `//dxdt` → `dy/dx`, `dy/dt`, `dx/dt`
 - `//int`, `//iint`, `//iiint`, `//oint` → `∫`, `∬`, `∭`, `∮`
 - `//prime`, `//dprime` → `′`, `″` (derivatives: `f′(x)`, `f″(x)`)
-- `//ddx` → `d/dx`
 - `//infty`, `//inf` → `∞`
 - `//pi`, `//theta`, `//alpha` → `π`, `θ`, `α`
 - `//sqrt` → `√`

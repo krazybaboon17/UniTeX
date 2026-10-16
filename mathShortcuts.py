@@ -19,7 +19,10 @@ templates = {
     "//_": "□",
     "//bar": "□",
     "//vec": "□",
-    "//lim": "lim_(□→□) (□)",
+    "//lim": "lim □->□ (□)",
+    "//ddx": "d/dx(□)",
+    "//ddt": "d/dt(□)",
+    "//ddy": "d/dy(□)",
 }
 
 superscripts = {
@@ -87,12 +90,16 @@ def finalText(name, boxes):
     if name == "//lim":
         var = boxes[0] if len(boxes) > 0 and boxes[0] else "x"
         target = boxes[1] if len(boxes) > 1 and boxes[1] else "0"
-        expr = boxes[2] if len(boxes) > 2 else ""
+        expr = boxes[2] if len(boxes) > 2 and boxes[2] else ""
         if expr:
-            if not (expr.startswith("(") and expr.endswith(")")):
-                expr = f"({expr})"
             return f"lim_({var}→{target}) {expr}"
         return f"lim_({var}→{target})"
+    if name in ("//ddx", "//ddt", "//ddy"):
+        var = name[-1]
+        expr = boxes[0] if len(boxes) > 0 and boxes[0] else ""
+        if expr:
+            return f"d/d{var}({expr})"
+        return f"d/d{var}"
     text = templates[name]
     for box in boxes:
         text = text.replace("□", box, 1)
