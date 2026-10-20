@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name = "unitex",
+    name = "uniflow",
     version = "1.1.0",
     description = "Auto-completing unicode text",
     
@@ -11,7 +11,7 @@ setup(
 
     entry_points = {
         'console_scripts': [
-            'unitex=runner:main',
+            'uniflow=runner:main',
         ],
     },
 )

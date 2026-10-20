@@ -1,20 +1,20 @@
-# UniTeX
+# UniFlow
 
-UniTeX is a lightweight global keyboard shortcut expander for math, physics, and science writing. Type shorthand like `//pi`, `//theta`, or `//int`, and UniTeX replaces it instantly with clean, universal Unicode symbols and formatted math expressions.
+UniFlow is a lightweight global keyboard shortcut expander for math, physics, and science writing. Type shorthand like `//pi`, `//theta`, or `//int`, and UniFlow replaces it instantly with clean, universal Unicode symbols and formatted math expressions.
 
 This project is designed for students, researchers, and anyone who types math frequently and wants a faster way to write equations without leaving the keyboard.
 
 ## Design Philosophy: Why Pure Unicode Instead of LaTeX?
 
-A deliberate, core architectural decision of UniTeX is to focus exclusively on standard Unicode math notation rather than generating LaTeX syntax:
+A deliberate, core architectural decision of UniFlow is to focus exclusively on standard Unicode math notation rather than generating LaTeX syntax:
 
 - **LaTeX tools already have LaTeX**: Modern technical writing environments (Overleaf, Obsidian, Typst, MS Word Equation Editor, Notion math blocks) already feature native LaTeX input and autocomplete.
 - **Everywhere else lacks math tools**: In Google Docs, Discord, Slack, emails, GitHub issues, Jupyter notebook comments, code docstrings, and browser text fields, there is no built-in math compiler.
-- **Universal portability**: Unicode symbols are standard characters. Expressions typed with UniTeX can be copied, pasted, and rendered anywhere on any operating system, phone, or browser without needing MathJax, KaTeX, or a TeX distribution.
+- **Universal portability**: Unicode symbols are standard characters. Expressions typed with UniFlow can be copied, pasted, and rendered anywhere on any operating system, phone, or browser without needing MathJax, KaTeX, or a TeX distribution.
 
-## What UniTeX does
+## What UniFlow does
 
-UniTeX listens for your keystrokes globally and watches for known shortcuts. When it sees a match, it:
+UniFlow listens for your keystrokes globally and watches for known shortcuts. When it sees a match, it:
 
 - deletes the typed shortcut text
 - inserts the symbolic replacement
@@ -39,7 +39,7 @@ If you write a lot of math, you probably know the pain of:
 - hunting for Greek letters in symbol pickers or copy-pasting from Wikipedia
 - trying to format fractions, exponents, or integrals in messaging apps, Google Docs, or forum posts
 
-UniTeX makes that much faster by turning a short typed sequence into proper math notation instantly.
+UniFlow makes that much faster by turning a short typed sequence into proper math notation instantly.
 
 ## Supported shortcut examples
 
@@ -68,7 +68,7 @@ Interactive templates:
 
 ## How it works
 
-At a high level, UniTeX does this:
+At a high level, UniFlow does this:
 
 1. Captures keyboard input globally.
 2. Keeps a small rolling buffer of recent keys.
@@ -85,8 +85,8 @@ This approach works especially well for fast math typing in text fields and edit
 Clone the repo and install dependencies:
 
 ```bash
-git clone https://github.com/krazybaboon17/UniTeX.git
-cd UniTeX
+git clone https://github.com/krazybaboon17/UniFlow.git
+cd UniFlow
 python3 -m pip install -r requirements.txt
 ```
 
@@ -104,7 +104,7 @@ Enter 0 for Settings, Enter 1 for Start:
 
 Choose:
 
-- `1` to start UniTeX
+- `1` to start UniFlow
 - `0` to open the settings menu and add custom shortcuts
 
 ### Option 2: Install as a command
@@ -118,7 +118,7 @@ python3 -m pip install -e .
 After that, you can run:
 
 ```bash
-unitex
+uniflow
 ```
 
 ### Option 3: Install script
@@ -135,7 +135,7 @@ This copies the installed binary to `/usr/local/bin` and allows it to be run fro
 
 When the app starts:
 
-1. Run `python3 runner.py` or `unitex`
+1. Run `python3 runner.py` or `uniflow`
 2. Press `1` to start
 3. Begin typing a shortcut like `//pi`
 4. When the shortcut is detected, it will be replaced automatically
@@ -151,7 +151,7 @@ Result: π
 
 ## Pausing and resuming
 
-UniTeX can be paused with the `Esc` key.
+UniFlow can be paused with the `Esc` key.
 
 - Press `Esc` once to pause
 - Press `Esc` again to resume
@@ -255,18 +255,18 @@ Windows may require appropriate permissions depending on how the keyboard hook o
 
 Check that:
 
-- UniTeX is actually running
+- UniFlow is actually running
 - the app is not paused (`Esc` toggles pause)
 - the shortcut you typed matches the dictionary exactly
 - the text field accepts normal keyboard input
 
 ### It replaces text unexpectedly
 
-This is a known limitation of global keyboard listeners. If your shortcut triggers in text you did not intend, pause UniTeX or use `Esc` to cancel the current session.
+This is a known limitation of global keyboard listeners. If your shortcut triggers in text you did not intend, pause UniFlow or use `Esc` to cancel the current session.
 
 ### It does not work in certain apps
 
-Some apps restrict global keyboard input or use custom input systems. UniTeX works best in standard text fields and browser text areas, but may behave differently in specialized environments.
+Some apps restrict global keyboard input or use custom input systems. UniFlow works best in standard text fields and browser text areas, but may behave differently in specialized environments.
 
 ### Custom shortcuts are not loading
 
@@ -316,7 +316,7 @@ It is a good example of a focused, original tool that solves a real pain point f
 
 ## Related landing page and setup guide
 
-The companion landing page for UniTeX is intended to help users understand installation and setup. If you are using the website/chatbot flow for onboarding, the recommended structure is:
+The companion landing page for UniFlow is intended to help users understand installation and setup. If you are using the website/chatbot flow for onboarding, the recommended structure is:
 
 1. Explain the problem: typing math is slow
 2. Show the shortcut examples

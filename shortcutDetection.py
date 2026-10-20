@@ -123,7 +123,7 @@ shortcuts = {
 def getShortcutsPath():
     if os.path.exists("customShortcuts.txt"):
         return "customShortcuts.txt"
-    homeDir = os.path.expanduser("~/.unitex")
+    homeDir = os.path.expanduser("~/.uniflow")
     try:
         os.makedirs(homeDir, exist_ok=True)
     except Exception:
@@ -139,7 +139,7 @@ def getShortcutsPath():
 
 def loadShortcuts():
     paths = []
-    homePath = os.path.expanduser("~/.unitex/customShortcuts.txt")
+    homePath = os.path.expanduser("~/.uniflow/customShortcuts.txt")
     if os.path.exists(homePath):
         paths.append(homePath)
     if os.path.exists("customShortcuts.txt") and os.path.abspath("customShortcuts.txt") != os.path.abspath(homePath):

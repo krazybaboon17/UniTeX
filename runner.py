@@ -16,9 +16,9 @@ def main():
 
     if userChoice == "0":
         print("\n--- Settings ---")
-        print("UniTeX is dedicated to universal Unicode math symbols and interactive templates.")
+        print("UniFlow is dedicated to universal Unicode math symbols and interactive templates.")
         print("Note: LaTeX is intentionally omitted—modern LaTeX editors have native support,")
-        print("while UniTeX brings portable math to any app, browser, or editor without a compiler.\n")
+        print("while UniFlow brings portable math to any app, browser, or editor without a compiler.\n")
         
         while True:
             choice = input("Enter [1] to add shortcut, [2] to view custom shortcuts, or [0] to finish settings: ").strip()
@@ -52,10 +52,10 @@ def main():
             else:
                 print("Invalid input. Please enter 0, 1, or 2.\n")
 
-        user = input("Start UniTeX now? (y/n): ").strip().lower()
+        user = input("Start UniFlow now? (y/n): ").strip().lower()
         while user not in ("y", "n"):
             print("Invalid input")
-            user = input("Start UniTeX now? (y/n): ").strip().lower()
+            user = input("Start UniFlow now? (y/n): ").strip().lower()
         if user == "y":
             userChoice = "1"
         else:
@@ -64,7 +64,7 @@ def main():
         shortcutDetection.loadShortcuts()
         listener = keyboardInput.startListener()
 
-        print("UniTeX is running in the background. Press Esc to pause.")
+        print("UniFlow is running in the background. Press Esc to pause.")
         print("\n")
 
         lastWord = ""

@@ -12,15 +12,15 @@ def onPress(key):
             mathTyping.cancel()
             charList.clear()
             cursorPosition = 0
-            print("\nUniTeX Template Cancelled")
+            print("\nUniFlow Template Cancelled")
             return
         paused = not paused
         charList.clear()
         cursorPosition = 0
         if paused:
-            print("\nUniTeX Paused. Press Esc to resume")
+            print("\nUniFlow Paused. Press Esc to resume")
         else:
-            print("\nUniTeX Resumed")
+            print("\nUniFlow Resumed")
         return
     if paused:
         return
