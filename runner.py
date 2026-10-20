@@ -15,29 +15,47 @@ def main():
         userChoice = input("Enter 0 for Settings, Enter 1 for Start: ")
 
     if userChoice == "0":
-        print("Settings")
-        print("Currently, the only option is to use Unicode. LaTeX will come with UniTeX 2.0")
-        addShortcuts = 1
-        while (addShortcuts == 1):
-            addShortcuts = int(input("Enter 0 to skip adding shortcuts, or 1 to add shortcuts: "))
-            if (addShortcuts == 0):
+        print("\n--- Settings ---")
+        print("UniTeX is dedicated to universal Unicode math symbols and interactive templates.")
+        print("Note: LaTeX is intentionally omitted—modern LaTeX editors have native support,")
+        print("while UniTeX brings portable math to any app, browser, or editor without a compiler.\n")
+        
+        while True:
+            choice = input("Enter [1] to add shortcut, [2] to view custom shortcuts, or [0] to finish settings: ").strip()
+            if choice == "0":
                 break
-            while (addShortcuts != 0 and addShortcuts != 1):
-                print("Invalid input")
-                addShortcuts = int(input("Enter 0 to skip adding shortcuts, or 1 to add shortcuts: "))
-            if addShortcuts == 1:
-                key = input("Enter shortcut: ")
-                value = input("Enter value: ")
+            elif choice == "1":
+                key = input("Enter shortcut (e.g. //hbar): ").strip()
+                value = input("Enter replacement symbol (e.g. ℏ): ").strip()
+                if key and value:
+                    shortcutsFile = shortcutDetection.getShortcutsPath()
+                    with open(shortcutsFile, "a", encoding="utf-8") as f:
+                        f.write(f"{key} : {value}\n")
+                    shortcutDetection.shortcuts[key] = value
+                    print(f"Shortcut added: {key} -> {value}\n")
+                else:
+                    print("Shortcut and value cannot be empty.\n")
+            elif choice == "2":
                 shortcutsFile = shortcutDetection.getShortcutsPath()
-                with open(shortcutsFile, "a", encoding="utf-8") as f:
-                    f.write(key + " : " + value + "\n")
-                print("Shortcut Added!")
-                print("\n")
-        print("\n")
-        user = input("Would you like to continue or not (y/n)?: ")
-        while (user != "y" and user != "n"):
+                print(f"\nCustom shortcuts from {shortcutsFile}:")
+                try:
+                    with open(shortcutsFile, "r", encoding="utf-8") as f:
+                        lines = [l.strip() for l in f if l.strip()]
+                        if lines:
+                            for l in lines:
+                                print(f"  {l}")
+                        else:
+                            print("  (No custom shortcuts found)")
+                except Exception as e:
+                    print(f"  (Could not read shortcuts: {e})")
+                print()
+            else:
+                print("Invalid input. Please enter 0, 1, or 2.\n")
+
+        user = input("Start UniTeX now? (y/n): ").strip().lower()
+        while user not in ("y", "n"):
             print("Invalid input")
-            user = input("Would you like to continue or not (y/n)?: ")
+            user = input("Start UniTeX now? (y/n): ").strip().lower()
         if user == "y":
             userChoice = "1"
         else:
@@ -48,9 +66,6 @@ def main():
 
         print("UniTeX is running in the background. Press Esc to pause.")
         print("\n")
-
-        
-
 
         lastWord = ""
         pendingWord = None
@@ -70,9 +85,10 @@ def main():
             if match is None:
                 templateMatch = mathShortcuts.findTemplate(word, shortcutDetection.shortcuts)
 
+            pendingMatch = None
+            pendingTemplate = False
             if match is None and templateMatch is None:
                 pendingMatch = shortcutDetection.findShortcut(word, allowAmbiguous=True)
-                pendingTemplate = False
                 if pendingMatch is None:
                     pendingMatch = mathShortcuts.findTemplate(
                         word, shortcutDetection.shortcuts, allowAmbiguous=True
@@ -90,9 +106,6 @@ def main():
                     templateMatch = pendingMatch
                 else:
                     match = pendingMatch
-                pendingWord = None
-                pendingSince = None
-            else:
                 pendingWord = None
                 pendingSince = None
 

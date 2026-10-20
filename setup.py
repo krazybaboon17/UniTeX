@@ -7,7 +7,7 @@ setup(
     
     author = "Saharsh Kaparthi, Bowen Li, Akhil Kora",
     py_modules = ['keyboardInput', 'shortcutDetection', 'deletingShortcut', 'writingValue', 'mathShortcuts', 'mathTyping', 'runner'],
-    install_requires=['keyboard', 'pynput'],
+    install_requires=['pynput>=1.7.6'],
 
     entry_points = {
         'console_scripts': [

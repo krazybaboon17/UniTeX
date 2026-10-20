@@ -1,8 +1,16 @@
 # UniTeX
 
-UniTeX is a lightweight keyboard shortcut expander for math and physics writing. Type shorthand like `//pi`, `//theta`, or `//int`, and UniTeX replaces it with the correct Unicode symbol or LaTeX-style output.
+UniTeX is a lightweight global keyboard shortcut expander for math, physics, and science writing. Type shorthand like `//pi`, `//theta`, or `//int`, and UniTeX replaces it instantly with clean, universal Unicode symbols and formatted math expressions.
 
 This project is designed for students, researchers, and anyone who types math frequently and wants a faster way to write equations without leaving the keyboard.
+
+## Design Philosophy: Why Pure Unicode Instead of LaTeX?
+
+A deliberate, core architectural decision of UniTeX is to focus exclusively on standard Unicode math notation rather than generating LaTeX syntax:
+
+- **LaTeX tools already have LaTeX**: Modern technical writing environments (Overleaf, Obsidian, Typst, MS Word Equation Editor, Notion math blocks) already feature native LaTeX input and autocomplete.
+- **Everywhere else lacks math tools**: In Google Docs, Discord, Slack, emails, GitHub issues, Jupyter notebook comments, code docstrings, and browser text fields, there is no built-in math compiler.
+- **Universal portability**: Unicode symbols are standard characters. Expressions typed with UniTeX can be copied, pasted, and rendered anywhere on any operating system, phone, or browser without needing MathJax, KaTeX, or a TeX distribution.
 
 ## What UniTeX does
 
@@ -25,11 +33,11 @@ The project supports both direct symbol replacement and interactive math templat
 
 ## Why this is useful
 
-If you write a lot of math, you probably know the pain of typing:
+If you write a lot of math, you probably know the pain of:
 
-- `	heta` and `	imes` and `rac`
-- Greek letters in notes, homework, or lab reports
-- derivative and integral notation in browser forms, Notion docs, or messaging apps
+- typing out verbose names like `theta`, `times`, or `sqrt`
+- hunting for Greek letters in symbol pickers or copy-pasting from Wikipedia
+- trying to format fractions, exponents, or integrals in messaging apps, Google Docs, or forum posts
 
 UniTeX makes that much faster by turning a short typed sequence into proper math notation instantly.
 

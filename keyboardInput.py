@@ -37,6 +37,12 @@ def onPress(key):
         cursorPosition = max(0, cursorPosition - 1)
     elif key == keyboard.Key.right:
         cursorPosition = min(len(charList), cursorPosition + 1)
+    elif key == keyboard.Key.space:
+        charList.insert(cursorPosition, " ")
+        cursorPosition += 1
+    elif key == keyboard.Key.enter:
+        charList.clear()
+        cursorPosition = 0
     elif getattr(key, "char", None) is not None:
         charList.insert(cursorPosition, key.char)
         cursorPosition += len(key.char)
