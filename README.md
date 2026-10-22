@@ -301,38 +301,3 @@ Potential areas for future improvement include:
 
 This project is distributed under the repository's existing licensing terms.
 
-## A note for demo / school presentation
-
-This project is particularly strong as a demo for a CS audience because it combines:
-
-- keyboard event handling
-- text processing
-- global input hooks
-- UI/UX around productivity tools
-- shortcut matching and state management
-- interactive template flows
-
-It is a good example of a focused, original tool that solves a real pain point for math-heavy users.
-
-## Related landing page and setup guide
-
-The companion landing page for UniFlow is intended to help users understand installation and setup. If you are using the website/chatbot flow for onboarding, the recommended structure is:
-
-1. Explain the problem: typing math is slow
-2. Show the shortcut examples
-3. Tell users how to install the tool
-4. Show how to run it from the terminal
-5. Explain the `Esc` pause behavior
-6. Provide a short list of useful shortcuts to start with
-7. Offer a quick custom-shortcut example
-
-That combination makes the project much easier to understand for new users.
-
----
-
-If you want, I can also help with one of these next:
-
-- tighten up the README for a more polished “product” tone
-- add a screenshot-friendly quickstart section for the landing page
-- draft a setup guide specifically for the school website/chatbot
-- create a short install script for Windows/macOS users to make this easier to launch
