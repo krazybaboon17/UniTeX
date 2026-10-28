@@ -61,6 +61,11 @@ def main():
         else:
             return
     if userChoice == "1":
+        try:
+            import widget
+            widget.launch_overlay()
+        except Exception:
+            pass
         shortcutDetection.loadShortcuts()
         listener = keyboardInput.startListener()
 
