@@ -24,10 +24,9 @@ Examples:
 
 - `//pi` → `π`
 - `//theta` → `θ`
-- `//int` → `∫`
+- `//int` → an interactive integral template (with sub/superscript limits)
 - `//sum` → `∑`
 - `//frac` → an interactive fraction template
-- `//lim` → a limit template
 
 The project supports both direct symbol replacement and interactive math templates for common notation.
 
@@ -62,7 +61,7 @@ Interactive templates:
 - `//frac` → fraction template
 - `//pow` → power/superscript template
 - `//_` → subscript template
-- `//lim` → limit template
+- `//int`, `//oint`, `//iint`, `//iiint` → integral templates (subscript lower limit, superscript upper limit)
 - `//sin`, `//cos`, `//tan`, `//ln` → function templates
 - `//ddx`, `//ddt` → derivative templates
 
@@ -185,19 +184,27 @@ Some shortcuts trigger a guided template flow instead of a direct replacement.
 
 Examples:
 
-- `//frac` → creates a fraction template
-- `//pow` → creates a power template
-- `//lim` → creates a limit template
-- `//sin` → creates a sine template
+- `//int` → creates an interactive integral template with lower and upper limit boxes
+- `//oint` → contour line integral template
+- `//iint`, `//iiint` → double and triple integral templates
+- `//frac` → creates a fraction template `(numerator)/(denominator)`
+- `//pow` → creates a power/superscript template (e.g. `x//pow` -> `x²`)
+- `//_` → creates a subscript template (e.g. `x//_` -> `x₁`)
+- `//log` → logarithm template with custom base `log_b(x)`
+- `//sin`, `//cos`, `//tan`, `//ln` → function templates with parenthesized arguments
+- `//ddx`, `//ddt`, `//ddy` → derivative templates
 
-Once a template is open:
+### How to use Interactive Templates Step-by-Step
 
-- use `Tab` or Right Arrow to move to the next input box
-- type into the highlighted box
-- press `Enter` or move to the final box to finish
-- press `Space` in the final field to complete the expression
-
-This makes expressions like fractions, powers, and derivatives much easier to build without needing to type everything manually.
+1. **Trigger the template**: Type the shortcut anywhere (e.g., type `//int` or `//frac`). UniFlow automatically replaces the shortcut with the placeholder structure (e.g. `∫_□^□` or `(□)/(□)`) and selects the first placeholder box `□`.
+2. **Type into the highlighted box**: Since the box `□` is automatically selected, simply type your content. For example, in `//int`, type `0` to set the lower limit: `∫_0^□`.
+3. **Navigate to the next box**: Press **`Tab`** or the **Right Arrow `→`**. UniFlow will automatically advance to the second box `□` and highlight it for you.
+4. **Type the next limit / argument**: Type your content for the second box (e.g. `1` or `b` or `//infty` / `//inf` → `∞`).
+5. **Finish and expand**: 
+   - Press **`Enter`** at any time to immediately finalize the expression.
+   - Alternatively, press **`Tab`** or **`→`** from the last box, or press **`Space`** to complete it.
+   - UniFlow automatically formats the limits into clean Unicode superscripts/subscripts (e.g. `∫₀¹` or `∫ₐᵇ`).
+6. **Cancel anytime**: If you want to abort the template, press **`Esc`**.
 
 ## Common examples
 
@@ -209,29 +216,55 @@ This makes expressions like fractions, powers, and derivatives much easier to bu
 //gamma  -> γ
 //theta  -> θ
 //pi     -> π
+//lambda -> λ
+//sigma  -> σ
+//omega  -> ω
+//Delta  -> Δ
+//Omega  -> Ω
 ``` 
 
-### Operations
+### Calculus & Operations
 
 ```text
+//int    -> ∫_□^□ (template: formats to ∫₀¹ or ∫ₐᵇ)
+//iint   -> ∬_□^□ (double integral template)
+//iiint  -> ∭_□^□ (triple integral template)
+//oint   -> ∮_□^□ (contour line integral template)
+//ddx    -> d/dx(□) (derivative template)
+//ddt    -> d/dt(□) (time derivative template)
+//dydx   -> dy/dx
+//dydt   -> dy/dt
 //sum    -> ∑
 //prod   -> ∏
-//int    -> ∫
 //sqrt   -> √
+//cbrt   -> ∛(□)
+//partial-> ∂
+//nabla  -> ∇
+//infty  -> ∞
+//inf    -> ∞
 //deg    -> °
 //pm     -> ±
-//neq    -> ≠
+//mp     -> ∓
 ``` 
 
-### Relations and arrows
+### Relations, Arrows & Sets
 
 ```text
 //to     -> →
 //approx -> ≈
 //leq    -> ≤
 //geq    -> ≥
-//in     -> ∈
+//neq    -> ≠
+//belong -> ∈
+//notin  -> ∉
 //subset -> ⊂
+//supset -> ⊃
+//cup    -> ∪
+//cap    -> ∩
+//Z      -> ℤ (integers)
+//reals  -> ℝ
+//naturals-> ℕ
+//complex-> ℂ
 ``` 
 
 ## Requirements and permissions

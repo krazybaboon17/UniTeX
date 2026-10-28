@@ -20,5 +20,5 @@ sudo mv /tmp/uniflow_download /usr/local/bin/uniflow
 sudo chmod +x /usr/local/bin/uniflow
 
 echo ""
-echo "✅ UniFlow has been successfully installed!"
+echo "UniFlow has been successfully installed!"
 echo "You can now run it from any terminal by typing: uniflow"

@@ -48,14 +48,10 @@ shortcuts = {
     "//sqrt": "√",
     "//sum": "∑",
     "//prod": "∏",
-    "//int": "∫",
-    "//oint": "∮",
     "//partial": "∂",
     "//nabla": "∇",
     "//infty": "∞",
     "//inf": "∞",
-    "//iint": "∬",
-    "//iiint": "∭",
 
     # Relations
     "//neq": "≠",
@@ -79,7 +75,7 @@ shortcuts = {
     "//mapsto": "↦",
 
     # Sets
-    "//in": "∈",
+    "//belong": "∈",
     "//notin": "∉",
     "//subset": "⊂",
     "//supset": "⊃",
@@ -89,7 +85,7 @@ shortcuts = {
     "//cap": "∩",
     "//emptyset": "∅",
     "//naturals": "ℕ",
-    "//integers": "ℤ",
+    "//Z": "ℤ",
     "//rationals": "ℚ",
     "//reals": "ℝ",
     "//complex": "ℂ",
@@ -173,7 +169,8 @@ def getSymbol(key):
     return shortcuts[key]
 
 
-def findShortcut(text, allowAmbiguous=False):
+def findShortcut(text, otherShortcuts=(), allowAmbiguous=False):
+    names = tuple(shortcuts) + tuple(otherShortcuts)
     matches = []
     for shortcut in shortcuts:
         start = text.find(shortcut)
@@ -186,7 +183,7 @@ def findShortcut(text, allowAmbiguous=False):
         typedTail = text[start:]
         if not allowAmbiguous and any(
             len(candidate) > len(typedTail) and candidate.startswith(typedTail)
-            for candidate in shortcuts
+            for candidate in names
         ):
             continue
         return shortcut, start, start + len(shortcut)

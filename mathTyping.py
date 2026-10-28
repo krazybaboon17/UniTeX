@@ -95,7 +95,8 @@ def nextBox(previous):
         sepLen = len(pieces[previous + 1])
         if sepLen > 0:
             press(Key.right, sepLen)
-    selectBox(Key.right)
+    press(Key.right)
+    selectBox(Key.left)
     time.sleep(0.05)
     busy = False
 
@@ -147,7 +148,7 @@ def finish(viaSpace=False):
         time.sleep(0.05)
         busy = False
     else:
-        keyboard.type(final + state.trailingText + " ")
+        keyboard.type(final + state.trailingText)
         time.sleep(0.05)
         busy = False
 
@@ -209,7 +210,7 @@ def handleKey(key):
                 state.boxes[state.current] = state.boxes[state.current][:startIdx] + symbol
                 return True
 
-        # 2. Check if current box just typed a nested template (e.g. //frac, //pow, //sin, //lim)
+        # 2. Check if current box just typed a nested template (e.g. //frac, //pow, //sin, //int)
         tmplMatch = mathShortcuts.findTemplate(state.boxes[state.current], shortcutDetection.shortcuts, allowAmbiguous=False)
         if tmplMatch is not None:
             tmpl, startIdx, endIdx = tmplMatch

@@ -80,7 +80,7 @@ def main():
                 print("word:", word)
                 lastWord = word
 
-            match = shortcutDetection.findShortcut(word)
+            match = shortcutDetection.findShortcut(word, otherShortcuts=mathShortcuts.templates)
             templateMatch = None
             if match is None:
                 templateMatch = mathShortcuts.findTemplate(word, shortcutDetection.shortcuts)
@@ -88,7 +88,9 @@ def main():
             pendingMatch = None
             pendingTemplate = False
             if match is None and templateMatch is None:
-                pendingMatch = shortcutDetection.findShortcut(word, allowAmbiguous=True)
+                pendingMatch = shortcutDetection.findShortcut(
+                    word, otherShortcuts=mathShortcuts.templates, allowAmbiguous=True
+                )
                 if pendingMatch is None:
                     pendingMatch = mathShortcuts.findTemplate(
                         word, shortcutDetection.shortcuts, allowAmbiguous=True

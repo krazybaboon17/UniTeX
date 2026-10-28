@@ -19,10 +19,13 @@ templates = {
     "//_": "□",
     "//bar": "□",
     "//vec": "□",
-    "//lim": "lim □->□ (□)",
     "//ddx": "d/dx(□)",
     "//ddt": "d/dt(□)",
     "//ddy": "d/dy(□)",
+    "//int": "∫_□^□",
+    "//oint": "∮_□^□",
+    "//iint": "∬_□^□",
+    "//iiint": "∭_□^□",
 }
 
 superscripts = {
@@ -87,13 +90,30 @@ def finalText(name, boxes):
     if name == "//bar":
         b0 = boxes[0] if len(boxes) > 0 else ""
         return b0 + "\u0305"
-    if name == "//lim":
-        var = boxes[0] if len(boxes) > 0 and boxes[0] else "x"
-        target = boxes[1] if len(boxes) > 1 and boxes[1] else "0"
-        expr = boxes[2] if len(boxes) > 2 and boxes[2] else ""
-        if expr:
-            return f"lim_({var}→{target}) {expr}"
-        return f"lim_({var}→{target})"
+    if name in ("//int", "//oint", "//iint", "//iiint"):
+        baseSymbols = {
+            "//int": "∫",
+            "//oint": "∮",
+            "//iint": "∬",
+            "//iiint": "∭"
+        }
+        sym = baseSymbols.get(name, "∫")
+        sub = boxes[0] if len(boxes) > 0 else ""
+        sup = boxes[1] if len(boxes) > 1 else ""
+        
+        # Subscript part
+        if sub:
+            subStr = small(sub, subscripts) if all(c in subscripts for c in sub) else f"_({sub})"
+        else:
+            subStr = ""
+
+        # Superscript part
+        if sup:
+            supStr = small(sup, superscripts) if all(c in superscripts for c in sup) else f"^({sup})"
+        else:
+            supStr = ""
+
+        return f"{sym}{subStr}{supStr}"
     if name in ("//ddx", "//ddt", "//ddy"):
         var = name[-1]
         expr = boxes[0] if len(boxes) > 0 and boxes[0] else ""
