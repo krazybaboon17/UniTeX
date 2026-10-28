@@ -19,7 +19,9 @@ import keyboardInput
 
 try:
     import AppKit
+    # pyrefly: ignore[missing-import]
     import objc
+    # pyrefly: ignore[missing-import]
     from Foundation import NSObject, NSPoint, NSRect, NSSize, NSTimer, NSData
 except ImportError:
     AppKit = None
@@ -333,10 +335,14 @@ def run_standalone():
 
 
 def launch_overlay():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    widget_script = os.path.join(current_dir, "widget.py")
     try:
-        subprocess.Popen([sys.executable, widget_script], cwd=current_dir)
+        if getattr(sys, 'frozen', False):
+            # In a PyInstaller bundle, sys.executable is the compiled binary itself
+            subprocess.Popen([sys.executable, "--widget"])
+        else:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            widget_script = os.path.join(current_dir, "widget.py")
+            subprocess.Popen([sys.executable, widget_script], cwd=current_dir)
     except Exception as e:
         print(f"[UniFlow] Could not launch widget overlay: {e}")
 

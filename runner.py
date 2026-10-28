@@ -7,7 +7,13 @@ import mathShortcuts
 import mathTyping
 from pynput import keyboard
 
+import sys
+
 def main():
+    if "--widget" in sys.argv:
+        import widget
+        widget.run_standalone()
+        return
 
     userChoice = input("Enter 0 for Settings, Enter 1 for Start: ")
     while (userChoice != "0" and userChoice != "1"):
@@ -67,6 +73,8 @@ def main():
         except Exception:
             pass
         shortcutDetection.loadShortcuts()
+        keyboardInput.charList.clear()
+        keyboardInput.cursorPosition = 0
         listener = keyboardInput.startListener()
 
         print("UniFlow is running in the background. Press Esc to pause.")
@@ -82,7 +90,6 @@ def main():
 
             word = keyboardInput.returnWord()
             if word != lastWord:
-                print("word:", word)
                 lastWord = word
 
             match = shortcutDetection.findShortcut(word, otherShortcuts=mathShortcuts.templates)
