@@ -6,7 +6,7 @@ setup(
     description = "Auto-completing unicode text",
     
     author = "Saharsh Kaparthi, Bowen Li, Akhil Kora",
-    py_modules = ['keyboardInput', 'shortcutDetection', 'deletingShortcut', 'writingValue', 'mathShortcuts', 'mathTyping', 'runner'],
+    py_modules = ['keyboardInput', 'shortcutDetection', 'deletingShortcut', 'writingValue', 'mathShortcuts', 'mathTyping', 'runner', 'widget', 'ipc'],
     install_requires=['pynput>=1.7.6'],
 
     entry_points = {

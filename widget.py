@@ -15,9 +15,10 @@ import os
 import time
 import base64
 import subprocess
-import keyboardInput
+import ipc
 
 try:
+    # pyrefly: ignore[missing-import]
     import AppKit
     # pyrefly: ignore[missing-import]
     import objc
@@ -39,8 +40,11 @@ if AppKit:
                 raw_data = base64.b64decode(LOGO_PNG_BASE64)
                 ns_data = NSData.dataWithBytes_length_(raw_data, len(raw_data))
                 self.logo_img = AppKit.NSImage.alloc().initWithData_(ns_data)
-                self.drag_start_loc = None
-                self.has_dragged = False
+                self.drag_start_screen = None
+                self.drag_start_origin = None
+                self.is_dragging = False
+                self.is_paused = False
+                self.parent_pid = None
             return self
 
         def updateTrackingAreas(self):
@@ -64,22 +68,24 @@ if AppKit:
             self.setNeedsDisplay_(True)
 
         def mouseDown_(self, event):
-            self.drag_start_loc = event.locationInWindow()
-            self.has_dragged = False
+            self.drag_start_screen = AppKit.NSEvent.mouseLocation()
+            self.drag_start_origin = self.window().frame().origin
+            self.is_dragging = False
 
         def mouseDragged_(self, event):
-            if self.drag_start_loc:
-                loc = event.locationInWindow()
-                dx = loc.x - self.drag_start_loc.x
-                dy = loc.y - self.drag_start_loc.y
-                if abs(dx) > 3 or abs(dy) > 3:
-                    self.has_dragged = True
-                    origin = self.window().frame().origin
-                    self.window().setFrameOrigin_(NSPoint(origin.x + dx, origin.y + dy))
+            if self.drag_start_screen and self.drag_start_origin:
+                curr = AppKit.NSEvent.mouseLocation()
+                dx = curr.x - self.drag_start_screen.x
+                dy = curr.y - self.drag_start_screen.y
+                if (dx * dx + dy * dy) > 36.0:  # > 6px drag threshold
+                    self.is_dragging = True
+                    self.window().setFrameOrigin_(NSPoint(self.drag_start_origin.x + dx, self.drag_start_origin.y + dy))
 
         def mouseUp_(self, event):
-            if self.has_dragged:
+            if self.is_dragging:
+                self.is_dragging = False
                 return
+            self.is_dragging = False
 
             loc = self.convertPoint_fromView_(event.locationInWindow(), None)
             w = self.bounds().size.width
@@ -94,14 +100,17 @@ if AppKit:
                 quit_rect = NSRect(NSPoint(14, 44), NSSize(w - 28, 32))
 
                 if AppKit.NSPointInRect(loc, pause_rect):
-                    keyboardInput.paused = not keyboardInput.paused
+                    self.is_paused = not self.is_paused
                     self.setNeedsDisplay_(True)
+                    ipc.send_command("toggle_pause", runner_pid=self.parent_pid)
                 elif AppKit.NSPointInRect(loc, quit_rect):
                     print("\n[UniFlow] Quit requested from widget. Exiting...")
+                    ipc.send_command("quit", runner_pid=self.parent_pid)
                     try:
                         self.window().close()
                     except Exception:
                         pass
+                    time.sleep(0.05)
                     os._exit(0)
                 else:
                     self.window().setExpanded_(False)
@@ -110,7 +119,7 @@ if AppKit:
             bounds = self.bounds()
             w = bounds.size.width
             h = bounds.size.height
-            is_paused = keyboardInput.paused
+            is_paused = self.is_paused
 
             # Subtle rounded card background
             radius = 14.0 if self.expanded else 12.0
@@ -276,19 +285,50 @@ if AppKit:
 
 class WidgetSyncController(NSObject):
     def updateState_(self, timer):
-        if hasattr(self, "view") and self.view:
-            if hasattr(self, "last_paused"):
-                if self.last_paused != keyboardInput.paused:
-                    self.last_paused = keyboardInput.paused
+        if not hasattr(self, "view") or not self.view:
+            return
+
+        # Check if parent runner process is still alive
+        if hasattr(self, "parent_pid") and self.parent_pid:
+            if not ipc.is_process_alive(self.parent_pid):
+                print("[UniFlow] Parent runner process terminated. Closing widget.")
+                try:
+                    self.view.window().close()
+                except Exception:
+                    pass
+                os._exit(0)
+
+        # Sync paused state from session file
+        try:
+            session = ipc.get_session()
+            if session and "paused" in session:
+                remote_paused = session["paused"]
+                if self.last_paused != remote_paused or self.view.is_paused != remote_paused:
+                    self.last_paused = remote_paused
+                    self.view.is_paused = remote_paused
                     self.view.setNeedsDisplay_(True)
-            else:
-                self.last_paused = keyboardInput.paused
+        except Exception:
+            pass
 
 
-def run_standalone():
+def run_standalone(parent_pid=None):
     if not AppKit:
         print("AppKit not available.")
         return
+
+    if parent_pid is None:
+        if "--parent-pid" in sys.argv:
+            try:
+                idx = sys.argv.index("--parent-pid")
+                parent_pid = int(sys.argv[idx + 1])
+            except Exception:
+                pass
+        if parent_pid is None:
+            session = ipc.get_session()
+            if session:
+                parent_pid = session.get("runner_pid")
+
+    ipc.register_widget(os.getpid())
 
     app = AppKit.NSApplication.sharedApplication()
     app.setActivationPolicy_(AppKit.NSApplicationActivationPolicyAccessory)
@@ -320,11 +360,14 @@ def run_standalone():
     )
 
     view = WidgetView.alloc().initWithFrame_(frame)
+    view.parent_pid = parent_pid
+    view.is_paused = ipc.get_paused()
     window.setContentView_(view)
 
     sync_ctrl = WidgetSyncController.alloc().init()
     sync_ctrl.view = view
-    sync_ctrl.last_paused = keyboardInput.paused
+    sync_ctrl.parent_pid = parent_pid
+    sync_ctrl.last_paused = view.is_paused
 
     NSTimer.scheduledTimerWithTimeInterval_target_selector_userInfo_repeats_(
         0.1, sync_ctrl, "updateState:", None, True
@@ -334,15 +377,17 @@ def run_standalone():
     app.run()
 
 
-def launch_overlay():
+def launch_overlay(parent_pid=None):
     try:
+        if parent_pid is None:
+            parent_pid = os.getpid()
         if getattr(sys, 'frozen', False):
             # In a PyInstaller bundle, sys.executable is the compiled binary itself
-            subprocess.Popen([sys.executable, "--widget"])
+            subprocess.Popen([sys.executable, "--widget", "--parent-pid", str(parent_pid)])
         else:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             widget_script = os.path.join(current_dir, "widget.py")
-            subprocess.Popen([sys.executable, widget_script], cwd=current_dir)
+            subprocess.Popen([sys.executable, widget_script, "--parent-pid", str(parent_pid)], cwd=current_dir)
     except Exception as e:
         print(f"[UniFlow] Could not launch widget overlay: {e}")
 

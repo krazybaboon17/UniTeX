@@ -4,6 +4,48 @@ import mathTyping
 charList = []
 cursorPosition = 0
 paused = False
+
+def toggle_pause(from_source="Esc"):
+    global paused, cursorPosition
+    if mathTyping.isActive():
+        mathTyping.cancel()
+        charList.clear()
+        cursorPosition = 0
+        print("\nUniFlow Template Cancelled")
+    paused = not paused
+    charList.clear()
+    cursorPosition = 0
+    if paused:
+        print(f"\n[UniFlow] Paused ({from_source}). Press Esc or widget to resume")
+    else:
+        print(f"\n[UniFlow] Resumed ({from_source})")
+    try:
+        import ipc
+        ipc.set_paused(paused)
+    except Exception:
+        pass
+
+def set_paused_state(new_state, from_source="widget"):
+    global paused, cursorPosition
+    if mathTyping.isActive():
+        mathTyping.cancel()
+        charList.clear()
+        cursorPosition = 0
+        print("\nUniFlow Template Cancelled")
+    if paused != new_state:
+        paused = new_state
+        charList.clear()
+        cursorPosition = 0
+        if paused:
+            print(f"\n[UniFlow] Paused ({from_source}). Press Esc or widget to resume")
+        else:
+            print(f"\n[UniFlow] Resumed ({from_source})")
+        try:
+            import ipc
+            ipc.set_paused(paused)
+        except Exception:
+            pass
+
 def onPress(key):
     global cursorPosition
     global paused
@@ -14,13 +56,7 @@ def onPress(key):
             cursorPosition = 0
             print("\nUniFlow Template Cancelled")
             return
-        paused = not paused
-        charList.clear()
-        cursorPosition = 0
-        if paused:
-            print("\nUniFlow Paused. Press Esc to resume")
-        else:
-            print("\nUniFlow Resumed")
+        toggle_pause(from_source="Esc")
         return
     if paused:
         return

@@ -8,11 +8,21 @@ import mathTyping
 from pynput import keyboard
 
 import sys
+import os
+import signal
+import ipc
 
 def main():
     if "--widget" in sys.argv:
         import widget
-        widget.run_standalone()
+        parent_pid = None
+        if "--parent-pid" in sys.argv:
+            try:
+                idx = sys.argv.index("--parent-pid")
+                parent_pid = int(sys.argv[idx + 1])
+            except Exception:
+                pass
+        widget.run_standalone(parent_pid=parent_pid)
         return
 
     userChoice = input("Enter 0 for Settings, Enter 1 for Start: ")
@@ -67,9 +77,38 @@ def main():
         else:
             return
     if userChoice == "1":
+        runner_pid = os.getpid()
+        ipc.init_session(runner_pid=runner_pid, paused=False)
+
+        listener = None
+
+        def sigusr1_handler(signum, frame):
+            keyboardInput.toggle_pause(from_source="widget")
+
+        def sigterm_handler(signum, frame):
+            print("\n[UniFlow] Quit requested from widget. Exiting...")
+            if listener:
+                try:
+                    listener.stop()
+                except Exception:
+                    pass
+            ipc.cleanup()
+            os._exit(0)
+
+        if hasattr(signal, "SIGUSR1"):
+            try:
+                signal.signal(signal.SIGUSR1, sigusr1_handler)
+            except Exception:
+                pass
+        if hasattr(signal, "SIGTERM"):
+            try:
+                signal.signal(signal.SIGTERM, sigterm_handler)
+            except Exception:
+                pass
+
         try:
             import widget
-            widget.launch_overlay()
+            widget.launch_overlay(parent_pid=runner_pid)
         except Exception:
             pass
         shortcutDetection.loadShortcuts()
@@ -83,10 +122,34 @@ def main():
         lastWord = ""
         pendingWord = None
         pendingSince = None
-        while listener.is_alive():
-            if mathTyping.isActive():
-                time.sleep(0.05)
-                continue
+        try:
+            while listener.is_alive():
+                # Process any pending command from widget
+                cmd_data = ipc.pop_command()
+                if cmd_data:
+                    cmd = cmd_data.get("cmd")
+                    if cmd == "quit":
+                        print("\n[UniFlow] Quit requested from widget. Exiting...")
+                        try:
+                            listener.stop()
+                        except Exception:
+                            pass
+                        ipc.cleanup()
+                        os._exit(0)
+                    elif cmd == "toggle_pause":
+                        keyboardInput.toggle_pause(from_source="widget")
+                    elif cmd == "pause":
+                        keyboardInput.set_paused_state(True, from_source="widget")
+                    elif cmd == "resume":
+                        keyboardInput.set_paused_state(False, from_source="widget")
+
+                if keyboardInput.paused:
+                    time.sleep(0.05)
+                    continue
+
+                if mathTyping.isActive():
+                    time.sleep(0.05)
+                    continue
 
             word = keyboardInput.returnWord()
             if word != lastWord:
@@ -147,9 +210,16 @@ def main():
                     mathTyping.start(template, suffix)
 
             time.sleep(0.05)
-
-        print("listener stopped")
-        listener.stop()
+        except KeyboardInterrupt:
+            print("\n[UniFlow] Interrupted by user. Exiting...")
+        finally:
+            print("[UniFlow] Stopping listener and cleaning up...")
+            if listener:
+                try:
+                    listener.stop()
+                except Exception:
+                    pass
+            ipc.cleanup()
 
 if __name__ == "__main__":
     main()
