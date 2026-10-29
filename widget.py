@@ -189,14 +189,14 @@ if AppKit:
                 # Action Guide Instructions
                 h1_font = AppKit.NSFont.systemFontOfSize_weight_(9.5, AppKit.NSFontWeightMedium)
                 h1_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.85, 0.85, 0.85, 1.0)
-                h1_text = "• Press Esc anywhere to " + ("Pause" if not is_paused else "Resume")
+                h1_text = "• Terminal: Press Esc to " + ("Pause" if not is_paused else "Resume")
                 AppKit.NSString.stringWithString_(h1_text).drawAtPoint_withAttributes_(
                     NSPoint(14, 46),
                     {AppKit.NSFontAttributeName: h1_font, AppKit.NSForegroundColorAttributeName: h1_color}
                 )
 
-                h2_text = "• Ctrl + C in terminal to Quit"
-                h2_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.7, 0.4, 0.4, 1.0)
+                h2_text = "• Terminal: Press Ctrl + C to Quit"
+                h2_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.85, 0.5, 0.5, 1.0)
                 AppKit.NSString.stringWithString_(h2_text).drawAtPoint_withAttributes_(
                     NSPoint(14, 28),
                     {AppKit.NSFontAttributeName: h1_font, AppKit.NSForegroundColorAttributeName: h2_color}
