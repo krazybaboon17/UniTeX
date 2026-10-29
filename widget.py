@@ -94,26 +94,7 @@ if AppKit:
             if not self.expanded:
                 self.window().setExpanded_(True)
             else:
-                # Pause button (y from 84 to 118)
-                pause_rect = NSRect(NSPoint(14, 84), NSSize(w - 28, 34))
-                # Quit button (y from 44 to 76)
-                quit_rect = NSRect(NSPoint(14, 44), NSSize(w - 28, 32))
-
-                if AppKit.NSPointInRect(loc, pause_rect):
-                    self.is_paused = not self.is_paused
-                    self.setNeedsDisplay_(True)
-                    ipc.send_command("toggle_pause", runner_pid=self.parent_pid)
-                elif AppKit.NSPointInRect(loc, quit_rect):
-                    print("\n[UniFlow] Quit requested from widget. Exiting...")
-                    ipc.send_command("quit", runner_pid=self.parent_pid)
-                    try:
-                        self.window().close()
-                    except Exception:
-                        pass
-                    time.sleep(0.05)
-                    os._exit(0)
-                else:
-                    self.window().setExpanded_(False)
+                self.window().setExpanded_(False)
 
         def drawRect_(self, dirtyRect):
             bounds = self.bounds()
@@ -159,18 +140,18 @@ if AppKit:
                 dot_path.fill()
 
             else:
-                # EXPANDED STATE (210x160)
+                # EXPANDED STATE (200x110)
                 # Header Logo + Title
                 if self.logo_img:
                     self.logo_img.drawInRect_fromRect_operation_fraction_(
-                        NSRect(NSPoint(14, h - 30), NSSize(20, 20)),
+                        NSRect(NSPoint(14, h - 28), NSSize(18, 18)),
                         NSRect(NSPoint(0, 0), self.logo_img.size()),
                         AppKit.NSCompositingOperationSourceOver, 1.0
                     )
 
                 title_font = AppKit.NSFont.systemFontOfSize_weight_(11.0, AppKit.NSFontWeightBold)
                 AppKit.NSString.stringWithString_("UNIFLOW").drawAtPoint_withAttributes_(
-                    NSPoint(38, h - 26),
+                    NSPoint(36, h - 25),
                     {
                         AppKit.NSFontAttributeName: title_font,
                         AppKit.NSForegroundColorAttributeName: AppKit.NSColor.whiteColor()
@@ -189,66 +170,42 @@ if AppKit:
                 status_size = AppKit.NSString.stringWithString_(status_text).sizeWithAttributes_(status_attrs)
                 
                 dot_x = w - status_size.width - 22
-                dot_path = AppKit.NSBezierPath.bezierPathWithOvalInRect_(NSRect(NSPoint(dot_x, h - 23), NSSize(5, 5)))
+                dot_path = AppKit.NSBezierPath.bezierPathWithOvalInRect_(NSRect(NSPoint(dot_x, h - 22), NSSize(5, 5)))
                 status_color.setFill()
                 dot_path.fill()
 
                 AppKit.NSString.stringWithString_(status_text).drawAtPoint_withAttributes_(
-                    NSPoint(w - status_size.width - 14, h - 25), status_attrs
+                    NSPoint(w - status_size.width - 14, h - 24), status_attrs
                 )
 
-                # 1. Minimal Pause / Resume Button
-                btn_rect = NSRect(NSPoint(14, 84), NSSize(w - 28, 34))
-                btn_path = AppKit.NSBezierPath.bezierPathWithRoundedRect_xRadius_yRadius_(btn_rect, 6.0, 6.0)
-                AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.12, 0.12, 0.12, 1.0).setFill()
-                btn_path.fill()
-                AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.22, 0.22, 0.22, 1.0).setStroke()
-                btn_path.setLineWidth_(1.0)
-                btn_path.stroke()
+                # Divider line
+                div_path = AppKit.NSBezierPath.bezierPath()
+                div_path.moveToPoint_(NSPoint(14, h - 36))
+                div_path.lineToPoint_(NSPoint(w - 14, h - 36))
+                AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.18, 0.18, 0.18, 1.0).setStroke()
+                div_path.setLineWidth_(1.0)
+                div_path.stroke()
 
-                btn_label = "⏸  Pause (Esc)" if not is_paused else "▶  Resume (Esc)"
-                btn_font = AppKit.NSFont.systemFontOfSize_weight_(10.5, AppKit.NSFontWeightMedium)
-                btn_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.88, 0.88, 0.88, 1.0)
-                btn_attrs = {AppKit.NSFontAttributeName: btn_font, AppKit.NSForegroundColorAttributeName: btn_color}
-                btn_size = AppKit.NSString.stringWithString_(btn_label).sizeWithAttributes_(btn_attrs)
-                AppKit.NSString.stringWithString_(btn_label).drawAtPoint_withAttributes_(
-                    NSPoint((w - btn_size.width) / 2.0, 84 + (34 - btn_size.height) / 2.0),
-                    btn_attrs
+                # Action Guide Instructions
+                h1_font = AppKit.NSFont.systemFontOfSize_weight_(9.5, AppKit.NSFontWeightMedium)
+                h1_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.85, 0.85, 0.85, 1.0)
+                h1_text = "• Press Esc anywhere to " + ("Pause" if not is_paused else "Resume")
+                AppKit.NSString.stringWithString_(h1_text).drawAtPoint_withAttributes_(
+                    NSPoint(14, 46),
+                    {AppKit.NSFontAttributeName: h1_font, AppKit.NSForegroundColorAttributeName: h1_color}
                 )
 
-                # 2. Minimal Quit Button
-                quit_rect = NSRect(NSPoint(14, 44), NSSize(w - 28, 32))
-                quit_path = AppKit.NSBezierPath.bezierPathWithRoundedRect_xRadius_yRadius_(quit_rect, 6.0, 6.0)
-                AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.1, 0.1, 0.1, 1.0).setFill()
-                quit_path.fill()
-                AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.2, 0.2, 0.2, 1.0).setStroke()
-                quit_path.setLineWidth_(1.0)
-                quit_path.stroke()
-
-                quit_label = "Quit UniFlow"
-                quit_font = AppKit.NSFont.systemFontOfSize_weight_(10.0, AppKit.NSFontWeightRegular)
-                quit_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.7, 0.35, 0.35, 1.0)
-                quit_attrs = {AppKit.NSFontAttributeName: quit_font, AppKit.NSForegroundColorAttributeName: quit_color}
-                quit_size = AppKit.NSString.stringWithString_(quit_label).sizeWithAttributes_(quit_attrs)
-                AppKit.NSString.stringWithString_(quit_label).drawAtPoint_withAttributes_(
-                    NSPoint((w - quit_size.width) / 2.0, 44 + (32 - quit_size.height) / 2.0),
-                    quit_attrs
+                h2_text = "• Ctrl + C in terminal to Quit"
+                h2_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.7, 0.4, 0.4, 1.0)
+                AppKit.NSString.stringWithString_(h2_text).drawAtPoint_withAttributes_(
+                    NSPoint(14, 28),
+                    {AppKit.NSFontAttributeName: h1_font, AppKit.NSForegroundColorAttributeName: h2_color}
                 )
 
-                # 3. Terminal Hint
-                tip_font = AppKit.NSFont.systemFontOfSize_(8.0)
-                tip_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.5, 0.5, 0.5, 1.0)
-                tip_text = "Ctrl + C in terminal to exit"
-                tip_size = AppKit.NSString.stringWithString_(tip_text).sizeWithAttributes_({AppKit.NSFontAttributeName: tip_font})
-                AppKit.NSString.stringWithString_(tip_text).drawAtPoint_withAttributes_(
-                    NSPoint((w - tip_size.width) / 2.0, 24),
-                    {AppKit.NSFontAttributeName: tip_font, AppKit.NSForegroundColorAttributeName: tip_color}
-                )
-
-                # 4. Drag hint
+                # Minimize / Drag Hint
                 drag_font = AppKit.NSFont.systemFontOfSize_(7.5)
-                drag_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.35, 0.35, 0.35, 1.0)
-                drag_text = "Click outside to minimize • Drag to move"
+                drag_color = AppKit.NSColor.colorWithCalibratedRed_green_blue_alpha_(0.38, 0.38, 0.38, 1.0)
+                drag_text = "Click to minimize • Drag to move"
                 drag_size = AppKit.NSString.stringWithString_(drag_text).sizeWithAttributes_({AppKit.NSFontAttributeName: drag_font})
                 AppKit.NSString.stringWithString_(drag_text).drawAtPoint_withAttributes_(
                     NSPoint((w - drag_size.width) / 2.0, 10),
@@ -264,7 +221,7 @@ if AppKit:
 
         def setExpanded_(self, expand):
             collapsed_w, collapsed_h = 50.0, 50.0
-            expanded_w, expanded_h = 210.0, 160.0
+            expanded_w, expanded_h = 200.0, 110.0
 
             curr_frame = self.frame()
             if expand:
